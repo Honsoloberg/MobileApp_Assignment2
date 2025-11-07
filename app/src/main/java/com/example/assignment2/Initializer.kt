@@ -1,8 +1,10 @@
 package com.example.assignment2
 
+//creates a list of default locations using the Location objects. This is only used by the database when it is created.
 class Initializer (){
     public val locationList: ArrayList<Location> = ArrayList()
 
+    //creates a list of 100 default location to be loaded into the database
     public fun initialize(): ArrayList<Location> {
         locationList.add(Location("Downtown Toronto", 43.6532, -79.3832))
         locationList.add(Location("CN Tower", 43.6426, -79.3871))

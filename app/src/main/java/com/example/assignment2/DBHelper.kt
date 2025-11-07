@@ -17,64 +17,63 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
             )
         """.trimIndent()
         db.execSQL(query)
+
+        //when the database is created, calls fill table to initialize database with default locations
+        fillTable()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS Locations")
     }
 
-    fun getLocation(address: String): Location?{
+    //queries a location from the database based on address
+    fun getLocation(address: String): Location? {
         val db = this.readableDatabase
         val query = "SELECT * FROM Locations WHERE address = '$address'"
         val cursor = db.rawQuery(query, null)
 
-        if(cursor.moveToFirst()){
-            val location = Location(address, cursor.getDouble(2), cursor.getDouble(3), cursor.getInt(0))
+        if (cursor.moveToFirst()) {
+            val location =
+                Location(address, cursor.getDouble(2), cursor.getDouble(3), cursor.getInt(0))
             cursor.close()
             return location
-        }else{
+        } else {
             cursor.close()
             return null
         }
     }
 
+    //adds location to the database
     fun addLocation(location: Location) {
         val db = this.writableDatabase
-        val query = "INSERT INTO Locations (address, lat, lon) VALUES ('${location.address}', ${location.lat}, ${location.lon})"
+        val query =
+            "INSERT INTO Locations (address, lat, lon) VALUES ('${location.address}', ${location.lat}, ${location.lon})"
         db.execSQL(query)
     }
 
+    //deletes a location from the database
     fun deleteLocation(location: Location) {
         val db = this.writableDatabase
         val query = "DELETE FROM Locations WHERE id = '${location.id}'"
         db.execSQL(query)
     }
 
+    //update information for a location in the database
     fun updateLocation(location: Location) {
         val db = this.writableDatabase
-        val query = "UPDATE Locations SET address = '${location.address}', lat = ${location.lat}, lon = ${location.lon} WHERE id = '${location.id}'"
+        val query =
+            "UPDATE Locations SET address = '${location.address}', lat = ${location.lat}, lon = ${location.lon} WHERE id = '${location.id}'"
         db.execSQL(query)
     }
 
-    fun fillTable(){
+    //function to fill the database with the list of default locations
+    fun fillTable() {
         val locationList = Initializer().initialize()
         val db = this.writableDatabase
-        for(location in locationList){
-            val query = "INSERT INTO Locations (address, lat, lon) VALUES ('${location.address.toLowerCase()}', ${location.lat}, ${location.lon})"
+        for (location in locationList) {
+            val query =
+                "INSERT INTO Locations (address, lat, lon) VALUES ('${location.address.toLowerCase()}', ${location.lat}, ${location.lon})"
             db.execSQL(query)
-        }
-    }
-
-    fun isEmpty(): Boolean{
-        val db = this.readableDatabase
-        val query = "SELECT * FROM Locations"
-        val cursor = db.rawQuery(query, null)
-        if(cursor.moveToFirst()){
-            cursor.close()
-            return false
-        }else{
-            cursor.close()
-            return true
         }
     }
 }
