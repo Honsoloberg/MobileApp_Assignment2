@@ -17,9 +17,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
             )
         """.trimIndent()
         db.execSQL(query)
-
-        //when the database is created, calls fill table to initialize database with default locations
-        fillTable()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -74,6 +71,20 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
             val query =
                 "INSERT INTO Locations (address, lat, lon) VALUES ('${location.address.toLowerCase()}', ${location.lat}, ${location.lon})"
             db.execSQL(query)
+        }
+    }
+
+    fun isEmpty(): Boolean{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM Locations"
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            cursor.close()
+            return false
+        } else {
+            cursor.close()
+            return true
         }
     }
 }

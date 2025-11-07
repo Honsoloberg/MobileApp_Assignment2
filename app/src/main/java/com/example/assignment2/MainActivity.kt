@@ -55,6 +55,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //initialize database helper.
         val db = DBHelper(this, null)
+        if(db.isEmpty()){
+            //when the database is created, calls fill table to initialize database with default locations
+            db.fillTable()
+        }
 
         //initialize map fragment
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -96,7 +100,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     return true
                 }
 
-                //if the location entry doens't exist ensure the text view's show nothing
+                //if the location entry doesn't exist ensure the text view's show nothing
                 latText.setText("")
                 lonText.setText("")
 
