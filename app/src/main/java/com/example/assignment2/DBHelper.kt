@@ -25,11 +25,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
 
     fun getLocation(address: String): Location?{
         val db = this.readableDatabase
-        val query = "SELECT lat, lon FROM Locations WHERE address = '$address'"
+        val query = "SELECT * FROM Locations WHERE address = '$address'"
         val cursor = db.rawQuery(query, null)
 
         if(cursor.moveToFirst()){
-            val location = Location(address, cursor.getDouble(0), cursor.getDouble(1))
+            val location = Location(address, cursor.getDouble(2), cursor.getDouble(3), cursor.getInt(0))
             cursor.close()
             return location
         }else{
@@ -46,13 +46,13 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
 
     fun deleteLocation(location: Location) {
         val db = this.writableDatabase
-        val query = "DELETE FROM Locations WHERE address = '${location.address}'"
+        val query = "DELETE FROM Locations WHERE id = '${location.id}'"
         db.execSQL(query)
     }
 
     fun updateLocation(location: Location) {
         val db = this.writableDatabase
-        val query = "UPDATE Locations SET lat = ${location.lat}, lon = ${location.lon} WHERE address = '${location.address}'"
+        val query = "UPDATE Locations SET address = '${location.address}', lat = ${location.lat}, lon = ${location.lon} WHERE id = '${location.id}'"
         db.execSQL(query)
     }
 
